@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pneumonia Detection • AI</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+      --bg: #0a0a0a;
+      --card: #111111;
+      --accent: #0071e3;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "SF Pro Display", "Inter", system-ui, sans-serif;
+      background: var(--bg);
+      color: #f5f5f7;
+      text-align: center;
+      padding: 60px 20px;
+      line-height: 1.4;
+      min-height: 100vh;
+    }
+
+    .header {
+      margin-bottom: 60px;
+    }
+
+    .title {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-size: 21px;
+      color: #86868b;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .container {
+      background: var(--card);
+      max-width: 460px;
+      margin: 0 auto;
+      padding: 48px 40px;
+      border-radius: 28px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(20px);
+    }
+
+    .upload-area {
+      border: 2px dashed #3a3a3c;
+      border-radius: 20px;
+      padding: 60px 20px;
+      margin: 30px 0;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .upload-area:hover {
+      border-color: var(--accent);
+      background: rgba(0, 113, 227, 0.05);
+    }
+
+    .upload-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.8;
+    }
+
+    .upload-text {
+      font-size: 17px;
+      color: #86868b;
+      margin-bottom: 8px;
+    }
+
+    .upload-subtext {
+      font-size: 13px;
+      color: #555;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    button {
+      background: linear-gradient(to bottom, #0071e3, #0066cc);
+      color: white;
+      font-size: 17px;
+      font-weight: 600;
+      padding: 14px 32px;
+      border: none;
+      border-radius: 9999px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+      box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(to bottom, #0077ed, #0061c2);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0, 113, 227, 0.4);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .result {
+      margin-top: 40px;
+      text-align: left;
+      background: rgba(255,255,255,0.03);
+      padding: 28px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.06);
+      display: none;
+    }
+
+    .result.show {
+      display: block;
+    }
+
+    .result p {
+      margin: 14px 0;
+      font-size: 17px;
+    }
+
+    .result b {
+      color: #f5f5f7;
+    }
+
+    .model-label {
+      font-size: 15px;
+      color: #86868b;
+      margin-top: 24px;
+    }
+
+    hr {
+      border: none;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 20px 0;
+    }
+
+    .summary {
+      font-size: 19px;
+      font-weight: 600;
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    footer {
+      margin-top: 80px;
+      font-size: 13px;
+      color: #555;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h1 class="title">Pneumonia Detection</h1>
+    <p class="subtitle">Advanced AI-powered chest X-ray analysis</p>
+  </div>
+
+  <div class="container">
+    <div class="upload-area" id="uploadArea">
+      <div class="upload-icon">🫁</div>
+      <div class="upload-text">Drop your chest X-ray here</div>
+      <div class="upload-subtext">or click to browse • Supports JPG, PNG</div>
+    </div>
+
+    <input type="file" id="imageInput" accept="image/*">
+    
+    <button onclick="uploadImage()">Analyze Image</button>
+
+    <div class="result" id="resultBox"></div>
+  </div>
+
+  <footer>
+    Powered by dual deep learning models • For demonstration purposes only
+  </footer>
+
+  <script>
+    const uploadArea = document.getElementById("uploadArea");
+    const fileInput = document.getElementById("imageInput");
+
+    uploadArea.addEventListener("click", () => {
+      fileInput.click();
+    });
+
+    async function uploadImage() {
+      if (!fileInput.files.length) {
+        alert("Please select a chest X-ray image.");
+        return;
+      }
+
+      const resultBox = document.getElementById("resultBox");
+      resultBox.classList.remove("show");
+      resultBox.innerHTML = `
+        <p style="text-align:center; color:#86868b;">Analyzing with dual AI models...</p>
+        <p style="text-align:center; font-size:48px; margin:30px 0;">🫁</p>
+      `;
+      resultBox.style.display = "block";
+
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+
+      try {
+        const response = await fetch("http://localhost:8080/predict", {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await response.json();
+
+        resultBox.innerHTML = `
+          <p><b>Model 1</b></p>
+          <p style="font-size:28px; font-weight:600; color:#30d158;">${data.model_1}</p>
+          <p>Confidence: <b>${data.confidence_1.toFixed(4)}</b></p>
+
+          <hr>
+
+          <p><b>Model 2</b></p>
+          <p style="font-size:28px; font-weight:600; color:#30d158;">${data.model_2}</p>
+          <p>Confidence: <b>${data.confidence_2.toFixed(4)}</b></p>
+
+          <div class="summary">
+            Final Score: <b>${data.final_score}/2</b><br>
+            ${data.summary}
+          </div>
+        `;
+        resultBox.classList.add("show");
+
+      } catch (error) {
+        resultBox.innerHTML = `
+          <p style="color:#ff453a; text-align:center;">Unable to connect to the AI server.<br>Please make sure the backend is running on port 8080.</p>
+        `;
+        console.error(error);
+      }
+    }
+
+    // Allow drag & drop
+    uploadArea.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = "#0071e3";
+    });
+
+    uploadArea.addEventListener("dragleave", () => {
+      uploadArea.style.borderColor = "#3a3a3c";
+    });
+
+    uploadArea.addEventListener("drop", (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = "#3a3a3c";
+      fileInput.files = e.dataTransfer.files;
+      uploadImage();
+    });
+  </script>
+
+</body>
+</html>
