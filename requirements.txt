@@ -1,6 +1,9 @@
 Flask==3.0.3
 flask-cors==4.0.1
-numpy==1.26.4
-Pillow==10.3.0
-tensorflow==2.15.0
-keras==2.15.0
+tensorflow==2.10.0
+keras==2.10.0
+numpy==1.23.5
+pillow==9.2.0
+protobuf==3.19.6
+tensorboard==2.10.1
+tensorflow-estimator==2.10.0
